@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Paisa</title><meta name="theme-color" content="#0B0F14"><meta name="color-scheme" content="dark">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Paisa">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0B0F14;color:#E6EDF3;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.n,.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-weight:500}
+main{max-width:1280px;margin:0 auto;padding:20px 16px 56px;display:flex;flex-direction:column;gap:16px}
+.g{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}.k4{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.c{background:#121923;border:1px solid #1E2A38;border-radius:16px;padding:20px;min-width:0}
+.l{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9AA9BA;margin:0 0 8px}.mu{color:#9AA9BA;font-size:13px}
+h1{font-size:26px;margin:0}h2{font-size:16px;margin:0 0 4px}.big{font-size:24px}
+.t{height:8px;border-radius:4px;background:#1E2A38;overflow:hidden}.t i{display:block;height:100%;border-radius:4px;width:0}
+button{font:inherit;cursor:pointer}.bt{background:#2DD4BF;color:#06201C;border:0;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;min-height:44px}
+.b2{background:#1E2A38;color:#E6EDF3;border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:14px;min-height:44px}
+.in{background:#0B0F14;border:1px solid #2B3B4E;color:#E6EDF3;border-radius:10px;padding:10px;min-height:44px;font:14px system-ui,sans-serif;width:100%;min-width:0}
+:focus-visible{outline:2px solid #2DD4BF;outline-offset:2px}
+.er{display:flex;gap:8px;align-items:center;margin-bottom:8px}.er .a{flex:1 1 90px;min-width:0}.er .s{flex:0 1 96px;min-width:0}
+.x{background:none;border:0;color:#9AA9BA;font-size:22px;width:40px;min-height:44px}
+.cap{font-size:12px;color:#9AA9BA;margin:12px 0 6px}.hint{color:#9AA9BA;font-size:13px;margin-bottom:10px}
+.top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}.mn{display:flex;align-items:center;gap:8px}.mn b{min-width:130px;text-align:center}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.keys .b2{font-size:18px}.keys .op{background:#25405A}
+.disp{background:#0B0F14;border:1px solid #2B3B4E;border-radius:10px;padding:12px;text-align:right;font-size:24px;margin:10px 0;overflow:hidden}
+.bars{display:flex;gap:10px;align-items:flex-end;height:150px}.bars>div{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}.bars .pair{display:flex;gap:4px;align-items:flex-end;height:120px}.bars .pair i{width:14px;display:block}
+.stack{display:flex;height:14px;border-radius:7px;overflow:hidden;background:#1E2A38}.lg{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px}
+@media (prefers-reduced-motion:no-preference){.t i{transition:width .3s}}
+</style></head><body><main>
+<div class="top"><div><h1>Paisa</h1><div class="mu">Your data stays on this device.</div></div><div class="mn"><button class="b2" id="prev" aria-label="Previous month">‹</button><b id="monthLabel"></b><button class="b2" id="next" aria-label="Next month">›</button></div></div>
+<div class="g k4">
+<div class="c"><p class="l">Income</p><div class="n big" id="kIncome"></div></div>
+<div class="c"><p class="l">Spent</p><div class="n big" id="kSpent"></div></div>
+<div class="c"><p class="l">Safe to spend / day</p><div class="n big" id="kSafe" style="color:#2DD4BF"></div><div class="mu" id="kSafeNote"></div></div>
+<div class="c"><p class="l">Left over</p><div class="n big" id="kLeft"></div><div class="mu" id="kRate"></div></div></div>
+<div class="g">
+<div class="c"><h2>Quick add: everyday expense</h2><div class="hint">Goes into the month shown above.</div>
+<div class="er"><input class="in a" id="qa" type="number" inputmode="decimal" aria-label="Amount" placeholder="₹ amount"><select class="in s" id="qc" aria-label="Category"><option>Needs</option><option>Wants</option></select></div>
+<div class="er"><input class="in a" id="qn" aria-label="What for" placeholder="What for?"><button class="bt" id="qadd">Add</button></div>
+<div class="cap" id="expTotal"></div><div id="expList"></div></div>
+<div class="c"><h2>Income</h2><div class="hint">Allowance, brand sales, stipend, anything that comes in each month.</div><div id="incList"></div><button class="b2" id="incAdd">Add income source</button></div>
+<div class="c"><h2>Savings target</h2><div class="hint" id="gNote"></div>
+<div class="er"><input class="in a" id="g_n" aria-label="Goal name" placeholder="Goal name, e.g. Laptop fund"></div>
+<div class="er"><input class="in a" id="g_t" type="number" inputmode="decimal" aria-label="Target" placeholder="Target"><input class="in a" id="g_s" type="number" inputmode="decimal" aria-label="Saved so far" placeholder="Saved"></div>
+<div class="er"><input class="in a" id="g_m" type="number" inputmode="decimal" aria-label="Monthly contribution" placeholder="Per month"><button class="bt" id="gSave">Save this month</button></div>
+<div class="t" style="height:12px;margin-top:8px"><i id="gBar" style="background:#2DD4BF"></i></div><div class="n mu" id="gTxt" style="margin-top:6px"></div></div></div>
+<div class="g">
+<div class="c"><h2>Budget</h2><div class="hint">Set your split. Bars show what you actually used this month.</div><div id="budRows"></div><div class="mu" id="budWarn" style="color:#F5B14C"></div></div>
+<div class="c"><h2>Budget line and indifference curve</h2><div class="hint">Flexible money after fixed costs: <span class="n" id="flexPool"></span></div>
+<svg viewBox="0 0 420 250" width="100%" role="img" aria-label="Budget line with indifference curves for needs and wants"><path d="M40 20V220H400" fill="none" stroke="#3B4A5E"/><text x="400" y="240" fill="#9AA9BA" font-size="11" text-anchor="end">Flexible needs</text><text x="44" y="14" fill="#9AA9BA" font-size="11">Wants</text><path id="pLine" stroke="#F5B14C" stroke-width="2.5" fill="none"/><path id="pLow" stroke="#5B6B80" stroke-width="2" fill="none"/><path id="pHigh" stroke="#5B6B80" stroke-width="2" stroke-dasharray="4 4" fill="none"/><path id="pOpt" stroke="#2DD4BF" stroke-width="2.5" fill="none"/><circle id="cOpt" r="6" fill="#2DD4BF" cx="-20" cy="-20"/><circle id="cAct" r="6" fill="#FF8FA3" stroke="#0B0F14" stroke-width="2" cx="-20" cy="-20"/></svg>
+<div class="mu"><span style="color:#F5B14C">Amber</span> is what you can afford. <span style="color:#2DD4BF">Teal dot</span> is your best mix. <span style="color:#FF8FA3">Pink dot</span> is where you are.</div>
+<div class="cap">How much do you value wants? <span id="prefTxt"></span>%</div><input type="range" id="pref" min="5" max="95" aria-label="Preference for wants" style="width:100%"><div id="chText" style="margin-top:8px;font-size:14px"></div></div>
+<div class="c"><h2>Can I afford it?</h2><div class="hint">Opportunity cost check for any purchase.</div>
+<input class="in" id="chk" type="number" inputmode="decimal" aria-label="Price" placeholder="Price ₹"><div id="chkOut" style="margin-top:12px;display:flex;flex-direction:column;gap:6px;font-size:14px"></div>
+<h2 style="margin-top:22px">Calculator</h2><div class="disp n" id="calcDisplay">0</div><div class="keys" id="calcKeys"></div>
+<div class="er" style="margin-top:8px"><button class="b2" id="calcClear">Clear</button><button class="b2" id="calcUse">Use as expense amount</button></div></div></div>
+<div class="g">
+<div class="c"><h2>Bills</h2><div class="hint">Daily, monthly or yearly. Monthly cost: <span class="n" id="billsM"></span></div><div id="billList"></div><button class="b2" id="billAdd">Add bill</button></div>
+<div class="c"><h2>Unavoidable costs</h2><div class="hint">Fixed in the long run: rent, commute, phone. Total: <span class="n" id="fixM"></span></div><div id="fixList"></div><button class="b2" id="fixAdd">Add cost</button></div>
+<div class="c"><h2>Debts and loans</h2><div class="hint">Total still owed: <span class="n" id="owed" style="color:#FF8FA3"></span></div><div id="debtList"></div><button class="b2" id="debtAdd">Add debt</button></div></div>
+<div class="c"><h2>Monthly tracking</h2><div class="hint">Income against spending for the last six months.</div><div class="bars" id="trend"></div>
+<div class="mu" style="margin-top:8px">Grey is income, teal is spending, amber is the month you are viewing.</div><div class="cap" id="partsCap"></div><div class="stack" id="parts"></div><div class="lg" id="partsLg"></div></div>
+<div class="c"><h2>Your data</h2><div class="hint">Everything is saved only on this device. Export a backup before clearing browser data or switching phones.</div>
+<div class="er" style="flex-wrap:wrap"><button class="b2" id="exp">Export backup</button><button class="b2" id="impBtn">Import backup</button><input type="file" id="imp" accept="application/json" hidden><button class="b2" id="reset">Reset my data</button><button class="bt" id="install" hidden>Install app</button></div>
+<div class="mu" id="msg" role="status"></div><div class="mu" id="iosHint" hidden style="margin-top:6px">On iPhone: tap Share, then Add to Home Screen.</div></div>
+</main>
+<script>
+const N=x=>parseFloat(x)||0,$=id=>document.getElementById(id),sum=a=>a.reduce((p,c)=>p+c,0);
+const fmt=x=>(x<0?'-':'')+'₹'+Math.round(Math.abs(x)).toLocaleString('en-IN');
+const KEY='paisa-app-v1';
+function shift(m,d){const[y,o]=m.split('-').map(Number),t=new Date(y,o-1+d,1);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')}
+function label(m,long){const[y,o]=m.split('-').map(Number);return new Date(y,o-1,1).toLocaleString('en-IN',long?{month:'long',year:'numeric'}:{month:'short'})}
+const curMonth=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+function init(){return{nid:1,exp:[],inc:[],bills:[],fix:[],debts:[],bud:{needs:'0',wants:'0',debt:'0',sav:'0'},pref:'50',goal:{n:'',t:'0',s:'0',m:'0'}}}
+let S=Object.assign(init(),(()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}})());
+let month=curMonth(),upd=[],armed=false,cd='0',cacc=null,cop=null,cnew=true,chkV='';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function el(t,c,txt){const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e}
+function inp(o,k,{type='text',cls='in a',label=''}={}){const i=el('input',cls);i.type=type;if(type==='number')i.inputMode='decimal';i.value=o[k];i.setAttribute('aria-label',label);i.placeholder=label;i.addEventListener('input',()=>{o[k]=i.value;save();refresh()});return i}
+function sel(o,k,opts,label){const s=el('select','in s');s.setAttribute('aria-label',label);opts.forEach(v=>{const p=el('option',null,v);s.appendChild(p)});s.value=o[k];s.addEventListener('change',()=>{o[k]=s.value;save();refresh()});return s}
+function del(list,it){const b=el('button','x','×');b.setAttribute('aria-label','Delete');b.onclick=()=>{S[list]=S[list].filter(x=>x!==it);save();build()};return b}
+function add(list,tpl){S[list].push(Object.assign({id:S.nid++},tpl));save();build()}
+const mult={Daily:30,Monthly:1,Yearly:1/12};
+function build(){upd=[];
+ const fill=(id,list,rowFn,empty)=>{const box=$(id);box.textContent='';const items=list;if(!items.length)box.appendChild(el('div','hint',empty));items.forEach(it=>box.appendChild(rowFn(it)))};
+ fill('expList',S.exp.filter(x=>x.m===month),it=>{const r=el('div','er');r.append(inp(it,'n',{label:'Name'}),inp(it,'a',{type:'number',cls:'in s',label:'Amount'}),sel(it,'c',['Needs','Wants'],'Category'),del('exp',it));return r},'No expenses this month yet. Add your first one above.');
+ fill('incList',S.inc,it=>{const r=el('div','er');r.append(inp(it,'n',{label:'Source'}),inp(it,'a',{type:'number',cls:'in s',label:'Amount'}),del('inc',it));return r},'No income yet. Add your allowance or brand income.');
+ fill('fixList',S.fix,it=>{const r=el('div','er');r.append(inp(it,'n',{label:'Cost'}),inp(it,'a',{type:'number',cls:'in s',label:'Amount'}),del('fix',it));return r},'No fixed costs yet.');
+ fill('billList',S.bills,it=>{const w=el('div'),r=el('div','er'),eq=el('div','mu');eq.style.marginBottom='8px';r.style.marginBottom='2px';r.append(inp(it,'n',{label:'Bill'}),inp(it,'a',{type:'number',cls:'in s',label:'Amount'}),sel(it,'f',['Daily','Monthly','Yearly'],'Frequency'),del('bills',it));w.append(r,eq);upd.push(()=>{eq.textContent=fmt(N(it.a)*(mult[it.f]||1))+' a month'});return w},'No bills yet.');
+ fill('debtList',S.debts,it=>{const w=el('div'),r1=el('div','er'),r2=el('div','er'),bar=el('div','t'),fill_=el('i');fill_.style.background='#FF8FA3';bar.appendChild(fill_);const row=el('div'),tx=el('span','mu'),pay=el('button','b2','Pay EMI');pay.style.minHeight='36px';pay.style.padding='4px 12px';
+  row.style.cssText='display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px';row.append(tx,pay);
+  r1.append(inp(it,'n',{label:'Debt name'}),del('debts',it));r2.append(inp(it,'t',{type:'number',label:'Total'}),inp(it,'p',{type:'number',label:'Paid'}),inp(it,'e',{type:'number',label:'Monthly EMI'}));
+  pay.onclick=()=>{it.p=String(Math.min(N(it.t),N(it.p)+N(it.e)));save();build()};
+  w.append(r1,r2,bar,row);upd.push(()=>{const t=N(it.t),p=N(it.p),e=N(it.e);fill_.style.width=(t>0?Math.min(100,p/t*100):0)+'%';tx.textContent=fmt(Math.max(0,t-p))+' left'+(e>0?' · '+Math.ceil(Math.max(0,t-p)/e)+' payments':'')});return w},'No debts or loans. Add one if you have any.');
+ refresh()}
+const defs=[['Needs','needs','#2DD4BF'],['Wants','wants','#F5B14C'],['Debt payments','debt','#FF8FA3'],['Savings','sav','#8AB4FF']],budUI={};
+defs.forEach(d=>{const w=el('div');w.style.marginBottom='14px';const top=el('div');top.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px';
+ const p=inp(S.bud,d[1],{type:'number',cls:'in',label:d[0]+' percent'});p.style.width='72px';const side=el('span');side.style.cssText='display:flex;align-items:center;gap:6px';side.append(p,el('span','mu','%'));
+ const nm=el('span',null,d[0]);nm.style.fontWeight='600';top.append(nm,side);const bar=el('div','t'),f=el('i');bar.appendChild(f);const tx=el('div','n mu');tx.style.marginTop='4px';w.append(top,bar,tx);$('budRows').appendChild(w);budUI[d[1]]={f,tx,c:d[2]}});
+function refresh(){upd.forEach(f=>f());
+ const income=sum(S.inc.map(i=>N(i.a))),billsM=sum(S.bills.map(b=>N(b.a)*(mult[b.f]||1))),fixM=sum(S.fix.map(f=>N(f.a))),emi=sum(S.debts.map(d=>N(d.e))),gm=N(S.goal.m);
+ const mex=m=>S.exp.filter(x=>x.m===m),exN=sum(mex(month).filter(x=>x.c==='Needs').map(x=>N(x.a))),exW=sum(mex(month).filter(x=>x.c==='Wants').map(x=>N(x.a))),exT=exN+exW,fixedAll=billsM+fixM+emi;
+ const spent=fixedAll+exT,left=income-spent,pool=Math.max(0,income-fixedAll-gm),flexLeft=pool-exT,now=new Date(),[yy,mo]=month.split('-').map(Number),dim=new Date(yy,mo,0).getDate(),daysLeft=month===curMonth()?dim-now.getDate()+1:0;
+ $('monthLabel').textContent=label(month,true);$('kIncome').textContent=fmt(income);$('kSpent').textContent=fmt(spent);$('kLeft').textContent=fmt(left);$('kRate').textContent='Savings rate '+(income>0?Math.round(left/income*100):0)+'%';
+ $('kSafe').textContent=daysLeft&&income>0?fmt(Math.max(0,flexLeft/daysLeft)):'—';
+ $('kSafeNote').textContent=income<=0?'Add income to see this':daysLeft?(flexLeft<0?'Over your flexible budget by '+fmt(-flexLeft):fmt(flexLeft)+' flexible, '+daysLeft+' days left'):'Not the current month';
+ $('expTotal').textContent='This month: '+fmt(exT);
+ const gt=N(S.goal.t),gs=N(S.goal.s),gp=gt>0?Math.min(100,gs/gt*100):0,ml=gm>0?Math.ceil(Math.max(0,gt-gs)/gm):0;
+ $('gBar').style.width=gp+'%';$('gTxt').textContent=fmt(gs)+' of '+fmt(gt)+' ('+Math.round(gp)+'%)';
+ $('gNote').textContent=gt<=0?'Add a target to begin.':gs>=gt?'Target reached.':gm>0?'About '+ml+' months to go at '+fmt(gm)+' a month.':'Set a monthly amount to see your timeline.';
+ let tot=0;[[billsM+fixM+exN],[exW],[emi],[gm]].forEach((a,i)=>{const d=defs[i],pct=N(S.bud[d[1]]);tot+=pct;const plan=income*pct/100,over=a[0]>plan+.5,u=budUI[d[1]];u.f.style.width=(plan>0?Math.min(100,a[0]/plan*100):a[0]>0?100:0)+'%';u.f.style.background=over?'#FF6B81':u.c;u.tx.textContent=fmt(a[0])+' of '+fmt(plan)+(over?' · over':'')});
+ $('budWarn').textContent=Math.round(tot)===0?'Set your split to start budgeting.':Math.round(tot)!==100?'Your split adds up to '+Math.round(tot)+'%, aim for 100%.':'';
+ // economics
+ const a=Math.min(.95,Math.max(.05,N(S.pref)/100)),Mx=Math.max(pool*1.15,1),u=190/Mx,Nopt=(1-a)*pool,Wopt=a*pool;
+ const curve=kf=>{if(pool<=0)return'';const kk=Math.pow(Nopt,1-a)*Math.pow(Wopt,a)*kf,hi=Math.min(Mx*1.78,340/u),lo=pool*.02;let d='';for(let i=0;i<60;i++){const n=lo+(hi-lo)*i/59,w=Math.pow(kk/Math.pow(n,1-a),1/a),y=220-w*u;if(y>=22)d+=(d?'L':'M')+(40+n*u).toFixed(1)+' '+y.toFixed(1)}return d};
+ $('flexPool').textContent=fmt(pool);$('prefTxt').textContent=Math.round(a*100);
+ $('pLine').setAttribute('d',pool>0?'M40 '+(220-pool*u).toFixed(1)+'L'+(40+pool*u).toFixed(1)+' 220':'');$('pLow').setAttribute('d',curve(.7));$('pOpt').setAttribute('d',curve(1));$('pHigh').setAttribute('d',curve(1.35));
+ const show=pool>0;$('cOpt').setAttribute('cx',show?40+Nopt*u:-20);$('cOpt').setAttribute('cy',show?220-Wopt*u:-20);$('cAct').setAttribute('cx',show?40+Math.min(exN,Mx*1.7)*u:-20);$('cAct').setAttribute('cy',show?220-Math.min(exW,Mx)*u:-20);
+ $('chText').textContent=pool>0?'At your preference, the best split of '+fmt(pool)+' is about '+fmt(Wopt)+' on wants. You have spent '+fmt(exW)+' on wants'+(exW>Wopt?', so you are above the best mix.':', so you are within the best mix.'):'No flexible money left after fixed costs and savings. Cut a cost or raise income.';
+ // afford
+ const P=N(chkV),out=$('chkOut');out.textContent='';if(P>0){const v=el('div',null,P>flexLeft?'Over budget this month':P>flexLeft*.5?'Affordable, but a big bite':'Fits your budget');v.style.cssText='font-weight:700;color:'+(P>flexLeft?'#FF8FA3':'#2DD4BF');
+  out.append(v,el('div',null,pool>0?'That is '+(P/(pool/30)).toFixed(1)+' days of your flexible daily budget.':'You have no flexible budget right now.'),el('div',null,gm>0?'Opportunity cost: it delays '+(S.goal.n||'your goal')+' by about '+Math.ceil(P/(gm/30))+' days.':'Set a monthly savings amount to see the delay.'))}
+ $('billsM').textContent=fmt(billsM);$('fixM').textContent=fmt(fixM);$('owed').textContent=fmt(sum(S.debts.map(d=>Math.max(0,N(d.t)-N(d.p)))));
+ // trend
+ const months=[-5,-4,-3,-2,-1,0].map(d=>shift(month,d)),sp=months.map(x=>fixedAll+sum(mex(x).map(e=>N(e.a)))),mx=Math.max(income,...sp,1),tr=$('trend');tr.textContent='';
+ months.forEach((x,i)=>{const c=el('div'),pr=el('div','pair'),b1=el('i'),b2=el('i');b1.style.cssText='height:'+Math.round(income/mx*120)+'px;background:#3B4A5E';b2.style.cssText='height:'+Math.round(sp[i]/mx*120)+'px;background:'+(x===month?'#F5B14C':'#2DD4BF');pr.append(b1,b2);c.append(pr,el('div','mu',label(x)));tr.appendChild(c)});
+ $('partsCap').textContent='Where '+label(month,true)+' went';const pb=$('parts'),pl=$('partsLg');pb.textContent='';pl.textContent='';
+ [['Bills and fixed',billsM+fixM,'#2DD4BF'],['Debt',emi,'#FF8FA3'],['Everyday needs',exN,'#8AB4FF'],['Wants',exW,'#F5B14C']].forEach(p=>{const s=el('div');s.style.cssText='width:'+(spent>0?p[1]/spent*100:0)+'%;background:'+p[2];pb.appendChild(s);const l=el('span','mu'),sq=el('span',null,'■ ');sq.style.color=p[2];const am=el('span','n',fmt(p[1]));l.append(sq,p[0]+' ',am);pl.appendChild(l)});
+}
+// wiring
+$('prev').onclick=()=>{month=shift(month,-1);build()};$('next').onclick=()=>{month=shift(month,1);build()};
+$('qadd').onclick=()=>{const a=$('qa').value;if(N(a)>0){S.exp.push({id:S.nid++,n:$('qn').value||'Expense',a,c:$('qc').value,m:month});$('qa').value='';$('qn').value='';save();build()}};
+$('incAdd').onclick=()=>add('inc',{n:'',a:'0'});$('billAdd').onclick=()=>add('bills',{n:'',a:'0',f:'Monthly'});$('fixAdd').onclick=()=>add('fix',{n:'',a:'0'});$('debtAdd').onclick=()=>add('debts',{n:'',t:'0',p:'0',e:'0'});
+['n','t','s','m'].forEach(k=>{const i=$('g_'+k);i.value=S.goal[k]==='0'&&k!=='n'?'':S.goal[k];i.addEventListener('input',()=>{S.goal[k]=i.value;save();refresh()})});
+$('gSave').onclick=()=>{S.goal.s=String(N(S.goal.s)+N(S.goal.m));$('g_s').value=S.goal.s;save();refresh()};
+$('pref').value=S.pref;$('pref').addEventListener('input',e=>{S.pref=e.target.value;save();refresh()});
+$('chk').addEventListener('input',e=>{chkV=e.target.value;refresh()});
+['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','=','+'].forEach(k=>{const b=el('button','b2 n'+('0123456789.'.includes(k)?'':' op'),k);b.onclick=()=>press(k);$('calcKeys').appendChild(b)});
+function press(k){const rd=x=>Math.round(x*1e8)/1e8;if('0123456789.'.includes(k)){cd=cnew?(k==='.'?'0.':k):(k==='.'?(cd.includes('.')?cd:cd+'.'):(cd==='0'?k:cd+k));cnew=false}
+ else{const cur=parseFloat(cd),f={'+':(a,b)=>a+b,'−':(a,b)=>a-b,'×':(a,b)=>a*b,'÷':(a,b)=>b===0?0:a/b},res=cop&&!cnew?f[cop](cacc,cur):cur;cd=String(rd(res));if(k==='='){cacc=null;cop=null}else{cacc=res;cop=k}cnew=true}
+ $('calcDisplay').textContent=cd}
+$('calcClear').onclick=()=>{cd='0';cacc=null;cop=null;cnew=true;$('calcDisplay').textContent=cd};
+$('calcUse').onclick=()=>{$('qa').value=String(Math.max(0,parseFloat(cd)||0));$('qa').focus()};
+const msg=t=>{$('msg').textContent=t};
+$('exp').onclick=()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),a=el('a');a.href=URL.createObjectURL(b);a.download='paisa-backup-'+curMonth()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);msg('Backup downloaded.')};
+$('impBtn').onclick=()=>$('imp').click();
+$('imp').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const v=JSON.parse(t);if(!Array.isArray(v.exp)||!v.goal)throw 0;S=Object.assign(init(),v);save();location.reload()}catch(x){msg('That file is not a Paisa backup.')}})};
+$('reset').onclick=()=>{if(!armed){armed=true;$('reset').textContent='Tap again to erase everything';return}S=init();save();location.reload()};
+let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('install').hidden=false});
+$('install').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('install').hidden=true}};
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone)$('iosHint').hidden=false;
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+build();
+</script></body></html>
