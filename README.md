@@ -2,7 +2,7 @@
 
 A budgeting app for college students. Track your allowance and side income, bills, debts, savings goals and everyday spending, then see what's safe to spend each day. It also uses basic economics to show how well your spending matches what you value.
 
-**Live app:** https://paisaaapp.netlify.app
+**Live app:** https://nandiniagarwal-git.github.io/paisa/
 **Built by:** NANDINI AGARWAL
 
 ---
