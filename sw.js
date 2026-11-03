@@ -1,3 +1,4 @@
+/*Service Worker powering the Paisa Progressive Web App. It pre-caches essential assets, cleans up outdated caches, dynamically stores fetched resources, and enables offline access through a cache-first strategy with an offline fallback.*/
 const V='paisa-v1',FILES=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
